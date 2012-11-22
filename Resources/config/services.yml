@@ -2,13 +2,14 @@ parameters:
   router.class: Lsw\DefaultRoutingBundle\Routing\DefaultRouter
   lsw_default_route_loader.class: Lsw\DefaultRoutingBundle\Routing\DefaultRouteLoader
   lsw_default_template.class: Lsw\DefaultRoutingBundle\Templating\DefaultTemplate
-  
+
 services:
   lsw_default_route_loader:
     class: %lsw_default_route_loader.class%
     arguments: [@kernel]
     tags:
       - { name: routing.loader }
+
   lsw_default_template:
     class: %lsw_default_template.class%
     arguments: [@templating.engine.twig]

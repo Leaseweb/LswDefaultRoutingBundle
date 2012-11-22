@@ -3,6 +3,7 @@ namespace Lsw\DefaultRoutingBundle\Templating;
 
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Doctrine\Common\Util\Inflector;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -16,14 +17,16 @@ class DefaultTemplate
 {
   // holds the twig template reference
   protected $twig;
-  
+
   public function __construct(TwigEngine $twig)
-  { // store the twig template reference in this object
+  {
+    // store the twig template reference in this object
     $this->twig = $twig;
   }
-  
+
   public function onKernelView(GetResponseForControllerResultEvent $event)
-  { // if a template is already loaded return
+  {
+    // if a template is already loaded return
     if ($event->hasResponse()) return;
     // get the result form the action
     $result = $event->getControllerResult();
@@ -35,16 +38,29 @@ class DefaultTemplate
     if (!$format) $format = 'html';
     // get the route
     $route = $event->getRequest()->attributes->get('_route');
-    // match route to get bundle, controller and action names
-    if (!preg_match('/([^\.]+)\.([^\.]+)\.([^\.]+)/', $route, $name))
-    { throw new RouteNotFoundException("Cannot determine default template for route '$route', name should follow 'bundle.controller.action' naming convention");
+    // if the route is internal skip it
+    if ($route=='_internal')
+    { // assume controller parameter has action path
+      $controller = $event->getRequest()->attributes->get('_controller');
+      // parse controller to check whether it is well-formed or not
+      if (!preg_match('/([^:]+)Bundle:([^:]+):([^:]+)/', $controller))
+      { // controller cannot be parsed to determine template name
+        throw new RouteNotFoundException(sprintf('Cannot parse current controller "%s" for determining template', $controller));
+      }
+      // set template file
+      $templateFile = $controller.'.'.$format.'.twig';
     }
-    // set template file
-    $templateFile = implode(':', array(Inflector::classify($name[1]).'Bundle', Inflector::classify($name[2]), Inflector::tableize($name[3]).'.'.$format.'.twig'));
-    // Render the whole template including any layouts etc
-    $response = $this->twig->renderResponse($templateFile,$result);
+    else
+    { // match route to get bundle, controller and action names
+      if (!preg_match('/([^\.]+)\.([^\.]+)\.([^\.]+)/', $route, $name))
+      { throw new RouteNotFoundException("Cannot determine default template for route '$route', name should follow 'bundle.controller.action' naming convention");
+      }
+      // set template file
+      $templateFile = implode(':', array(Inflector::classify($name[1]).'Bundle', Inflector::classify($name[2]), Inflector::tableize($name[3]).'.'.$format.'.twig'));
+    }  
+    // render the template including any layouts etc
+    $response = $this->twig->renderResponse($templateFile, $result);
     // store the rendered template in the event
     $event->setResponse($response);
   }
-  
 }

@@ -3,6 +3,7 @@ namespace Lsw\DefaultRoutingBundle\Routing;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Routing\RequestContext;
 
 use Doctrine\Common\Util\Inflector;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -17,7 +18,7 @@ class DefaultRouter extends Router
   // holds the container reference to be able to get route from request
   private $container;
   
-  public function __construct(ContainerInterface $container, $resource, array $options = array(), RequestContext $context = null, array $defaults = array())
+  public function __construct(ContainerInterface $container, $resource, array $options = array(), RequestContext $context = null, $defaults = null)
   { // store the container reference in this object
     $this->container = $container;
     // if we are in development mode, disable the routing cache
@@ -34,20 +35,35 @@ class DefaultRouter extends Router
     if (!$this->collection) $this->getRouteCollection();
     // if the route does not exist
     if (!$this->collection->get($name)) 
-    { // get the current route
-      $route = $this->container->get('request')->attributes->get('_route');
+    { // get the current request
+      $request = $this->container->get('request');
       // relate the name to the current route
-      $name = $this->relate($route,$name);
+      $name = $this->relate($request,$name);
     } // generate the url from the name
     return parent::generate($name,$parameters,$absolute);
   }
   
-  private function relate($route,$name)
-  { // try to match the current route against the default routing scheme
-    if (!preg_match('/([^\.]+)\.([^\.]+)\.([^\.]+)/', $route, $current))
-    { // route cannot be related and was not found
-      throw new RouteNotFoundException(sprintf('Route "%s" does not exist.', $name));
-    } // if the route was found make sure the route is well formed
+  private function relate($request,$name)
+  { // get the current route
+    $route = $request->attributes->get('_route');
+    // if route is internal relate using controller
+    if ($route=='_internal')
+    { // get the current controller
+      $controller = $request->attributes->get('_controller');
+      // try to match the current route against the default routing scheme
+      if (!preg_match('/([^:]+)Bundle:([^:]+):([^:]+)/', $controller, $current))
+      { // route cannot be related and was not found
+        throw new RouteNotFoundException(sprintf('Cannot parse current controller "%s" for determining current route', $controller));
+      } 
+    }
+    else 
+    { // try to match the current route against the default routing scheme
+      if (!preg_match('/([^\.]+)\.([^\.]+)\.([^\.]+)/', $route, $current))
+      { // route cannot be related and was not found
+        throw new RouteNotFoundException(sprintf('Cannot parse current route "%s" for determining current route', $route));
+      } 
+    }
+    // if the route was found make sure the route is well formed
     $current = array(Inflector::tableize($current[1]),Inflector::tableize($current[2]),Inflector::tableize($current[3]));
     // the name is split into an array containing the new route
     $new = explode('.',$name);
