@@ -7,16 +7,25 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 
+/**
+ * {@inheritDoc}
+ */
 class LswDefaultRoutingExtension extends Extension
 {
-  public function load(array $configs, ContainerBuilder $container)
-  {
-    $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-    $loader->load('services.yml');
-  }
+    /**
+     * {@inheritDoc}
+     */
+    public function load(array $configs, ContainerBuilder $container)
+    {
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.yml');
+    }
 
-  public function getAlias()
-  {
-    return 'lsw_default_routing';
-  }
+    /**
+     * {@inheritDoc}
+     */
+    public function getAlias()
+    {
+        return 'lsw_default_routing';
+    }
 }
