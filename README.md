@@ -2,8 +2,8 @@ LswDefaultRoutingBundle
 =======================
 
 The LswDefaultRoutingBundle adds default routing to your Symfony2 application.
-Default routing adds a routing naming scheme to the configured bundles. This
-simplifies debugging and forces consistent naming of routes.
+Default routing adds a route naming scheme to the configured bundles. This
+forces consistent naming of routes and simplifies both programming and debugging.
 
 ## Requirements
 
