@@ -1,7 +1,7 @@
 {
     "name": "leaseweb/default-routing-bundle",
     "type": "symfony-bundle",
-    "description": "LeaseWeb LswDefaultRoutingBundle",
+    "description": "Provides default routing, relative routing and default templating",
     "keywords": ["routing","default routing","Symfony2"],
     "homepage": "http://www.leaseweblabs.com",
     "license": "MIT",
