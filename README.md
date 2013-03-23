@@ -25,7 +25,7 @@ Add LswDefaultRoutingBundle in your composer.json:
 ```js
 {
     "require": {
-        "leaseweb/default-routing-bundle": "*"
+        "leaseweb/default-routing-bundle": "1.0.*@dev"
     }
 }
 ```
