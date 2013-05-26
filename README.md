@@ -68,7 +68,7 @@ These lines should be added to add default routing to the popular FosUserBundle:
 
 ```
 FosUserBundle:
-    resource: "@FosUserBundle"
+    resource: "@FOSUserBundle"
     prefix:   /
     type:     default
 ````
