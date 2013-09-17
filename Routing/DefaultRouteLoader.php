@@ -82,6 +82,8 @@ class DefaultRouteLoader implements LoaderInterface
             $controller = $controllerName.'Controller';
 
             $controllerClass = new \ReflectionClass($bundleObj->getNameSpace().'\\Controller\\'.$controller);
+            if ($controllerClass->isAbstract()) continue;
+
             $methods = $controllerClass->getMethods(\ReflectionMethod::IS_PUBLIC);
             foreach ($methods as $method) {
                 if (substr($method->getName(), -strlen('Action'))=='Action') {
