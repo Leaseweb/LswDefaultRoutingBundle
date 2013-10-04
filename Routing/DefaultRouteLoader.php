@@ -79,7 +79,7 @@ class DefaultRouteLoader implements LoaderInterface
         $bundleName = substr($bundle, 0, -strlen('Bundle'));
 
         foreach ($controllers as $controllerName) {
-            $controller = $controllerName.'Controller';
+            $controller = str_replace('/', '\\', $controllerName.'Controller');
 
             $controllerClass = new \ReflectionClass($bundleObj->getNameSpace().'\\Controller\\'.$controller);
             if ($controllerClass->isAbstract()) continue;
@@ -93,6 +93,7 @@ class DefaultRouteLoader implements LoaderInterface
                     $name = Inflector::tableize($bundleName).
                             '.'.Inflector::tableize($controllerName).
                             '.'.Inflector::tableize($actionName);
+                    $name = str_replace('/', '.', $name);
                     // create the URL
                     $pattern = '/'.Inflector::tableize($controllerName).
                                          '/'.Inflector::tableize($actionName);
