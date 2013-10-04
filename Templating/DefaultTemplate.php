@@ -70,11 +70,17 @@ class DefaultTemplate
       $templateFile = $controller.'.'.$format.'.twig';
     } else {
       // match route to get bundle, controller and action names
-      if (!preg_match('/([^\.]+)\.([^\.]+)\.([^\.]+)/', $route, $name)) {
-        throw new RouteNotFoundException("Cannot determine default template for route '$route', name should follow 'bundle.controller.action' naming convention");
+      if (!preg_match('/([^\.]+)(\.[^\.]+){2,}/', $route, $name)) {
+        throw new RouteNotFoundException("Cannot determine default template for route '$route', name should follow 'bundle(.folder).controller.action' naming convention");
       }
+      $path = explode('.', $route);
+      $bundleName = array_shift($path);
+      $actionName = array_pop($path);
+      $path = array_map(array('Doctrine\Common\Util\Inflector', 'classify'), $path);
+      $controllerName = join('/', $path);
+
       // set template file
-      $templateFile = implode(':', array(Inflector::classify($name[1]).'Bundle', Inflector::classify($name[2]), Inflector::tableize($name[3]).'.'.$format.'.twig'));
+      $templateFile = implode(':', array(Inflector::classify($bundleName).'Bundle', $controllerName, Inflector::tableize($actionName).'.'.$format.'.twig'));
     }
     // render the template including any layouts etc
     $response = $this->twig->renderResponse($templateFile, $result);
