@@ -102,6 +102,11 @@ class DefaultRouteLoader implements LoaderInterface
                     // get the arguments (called parameters) from the action function definition
                     $parameters = $method->getParameters();
                     foreach ($parameters as $parameter) {
+                        // if parameter is an instance of Request component (added in Symfony 2.4), skip it
+                        $parameterClasss = $parameter->getClass();
+                        if ($parameterClasss &&
+                            $parameterClasss->getName() == 'Symfony\Component\HttpFoundation\Request') continue;
+
                         // add each argument as a parameter to the route
                         $pattern.='/{'.$parameter->getName().'}';
                         // optional arguments have a default value
