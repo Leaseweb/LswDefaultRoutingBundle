@@ -7,7 +7,7 @@ forces consistent naming of routes and simplifies both programming and debugging
 
 ## Requirements
 
-* Symfony 2.1
+* Symfony 2.1+
 
 ## Installation
 
