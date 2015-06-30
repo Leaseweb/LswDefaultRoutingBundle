@@ -15,8 +15,8 @@ Installation is broken down in the following steps:
 
 1. Download LswDefaultRoutingBundle using composer
 2. Enable the Bundle
-3. Install the needed locales
-4. Set the language in your application
+3. Add a default route into your routing.yml
+4. Check whether the default routes are added or not
 
 ### Step 1: Download LswDefaultRoutingBundle using composer
 
