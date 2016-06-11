@@ -79,8 +79,14 @@ With the prefix option you can avoid namespace collisions.
 
 Use the following command to see whether or not the routes where added:
 
+Symfony2:
 ```
 app/console router:debug
+```
+
+Symfony3:
+```
+bin/console debug:router
 ```
 
 The entries in the router table that are added by the default router look like this:
@@ -125,7 +131,7 @@ $this->redirect($this->generateUrl('view', compact('id')))
 
 #### In the Twig template
 
-When you are creating a link to a specific user from the index template in the 
+When you are creating a link to a specific user from the index template in the
 Resources/views/User/index.html.twig file you can use:
 
 ```

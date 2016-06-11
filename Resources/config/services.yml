@@ -6,12 +6,12 @@ parameters:
 services:
   lsw_default_route_loader:
     class: %lsw_default_route_loader.class%
-    arguments: [@kernel]
+    arguments: ['@kernel']
     tags:
       - { name: routing.loader }
 
   lsw_default_template:
     class: %lsw_default_template.class%
-    arguments: [@templating.engine.twig]
+    arguments: ['@templating.engine.twig']
     tags:
       - { name: kernel.event_listener, event: kernel.view, method: onKernelView }
